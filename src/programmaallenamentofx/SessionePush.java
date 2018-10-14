@@ -91,5 +91,10 @@ public class SessionePush extends Sessione {
         }
         //sessione.forEach(e -> System.out.println(e.getNome()));
     }
+    
+    
+     public SessionePush(Sessione s) {
+    super(s);
+    }
 
 }

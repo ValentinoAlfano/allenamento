@@ -44,4 +44,10 @@ public abstract class Sessione {
     public LocalDate getData() {
         return data;
     }
+
+    public Sessione(Sessione s) {
+        this(s.getData(), s.getSessione());
+        tipoSessione -=1;
+    }
+
 }

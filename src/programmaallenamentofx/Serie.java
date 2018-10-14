@@ -30,4 +30,17 @@ public class Serie {
         this.peso = peso;
     }
     
+    public Serie(String reps, double peso) {
+    this.reps=reps;
+    this.peso=peso;
+    
+    
+    }
+    public Serie(Serie s){
+     this(s.getReps(),s.getPeso());
+   
+    }
+    
+    public Serie() {}
+    
 }

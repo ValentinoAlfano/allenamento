@@ -98,5 +98,9 @@ public class SessionePull extends Sessione {
         }
         variante++;
     }
+    
+     public SessionePull(Sessione s) {
+    super(s);
+    }
 
 }

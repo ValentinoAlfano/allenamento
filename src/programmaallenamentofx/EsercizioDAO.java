@@ -6,17 +6,21 @@
 package programmaallenamentofx;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
+
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
+
 /**
  *
  * @author Giuseppe
@@ -24,7 +28,7 @@ import java.util.stream.Collectors;
 public class EsercizioDAO {
 
     public List<Fondamentale> leggiFileFondamentali(String nomeFile) throws FileNotFoundException, IOException {
-        
+
         List<Fondamentale> listFondamentali = new ArrayList();
 
         String nome;
@@ -44,9 +48,9 @@ public class EsercizioDAO {
             nome = st.nextToken();
             if (nome.equalsIgnoreCase("Deadlift")) {
 
-                peso = Double.parseDouble(st.nextToken()) - 5;
+                peso = Double.parseDouble(st.nextToken());
             } else {
-                peso = Double.parseDouble(st.nextToken()) - 2.5;
+                peso = Double.parseDouble(st.nextToken());
             }
             serieTotali = Byte.parseByte(st.nextToken());
 
@@ -63,7 +67,6 @@ public class EsercizioDAO {
             esercizio.setNome(nome);
             esercizio.setTipo(tipo);
 
-            // aggiornaProgressione(esercizio);
             Fondamentale copiaEsercizio = new Fondamentale(esercizio);
 
             listFondamentali.add(esercizio);
@@ -228,17 +231,19 @@ public class EsercizioDAO {
         eserciziLegs.addAll(eserciziMisc);
 
         LocalDate dataInc;
+        Sessione sess;
 
         dataInc = dataInizio.plusWeeks(1);
         List<Sessione> sessione = new ArrayList();
         List<Esercizio> accessori = esercizi.stream()
                 .filter(e -> e instanceof Accessorio)
                 .collect(Collectors.toList());
-        
-          Sessione stampaProva = null;
+
+        Sessione stampaProva = null;
         for (LocalDate date = dataInizio; date.isBefore(dataFine.plusDays(1)); date = date.plusDays(1)) {
 //            eserciziPush.forEach(s -> System.out.println(s.getNome()));
 //            System.out.println("Size: "+eserciziPush.size());
+
             if (dataInc.equals(date)) {
 
                 aggiornaProgressione(accessori);
@@ -253,9 +258,6 @@ public class EsercizioDAO {
 //
 //                    }
 //                }
-//                aggiornaProgressione(eserciziPush);
-//                aggiornaProgressione(eserciziPull);
-//                aggiornaProgressione(eserciziLegs);
                 dataInc = dataInc.plusWeeks(1);
             }
 
@@ -263,40 +265,20 @@ public class EsercizioDAO {
                     || date.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
                 continue;
             }
-          
-            sessione.add(stampaProva = creaSessione(date, eserciziPull, eserciziPush, eserciziLegs));
 
+            sessione.add(creaSessione(date, eserciziPull, eserciziPush, eserciziLegs));
 //            System.out.println(stampaProva.getData());
-//
-//            stampaProva.getSessione().stream()
-//                    
-//                    .map((e) -> {
-//                        System.out.println(e.getNome());
-//                        return e;
-//                    }).forEachOrdered((e) -> {
-//                e.getSerie().forEach((s) -> {
-//                    System.out.println("Peso: " + s.getPeso() + " Reps: " + s.getReps());
-//                });
-//            });
-
-            
-            
-                System.out.println("");
-            System.out.println(stampaProva.getData());
-            for (Esercizio e : stampaProva.getSessione()) {
-                System.out.println("");
-                if (e instanceof Accessorio) {
-                    
-                    System.out.print(e.getNome() + ": ");
-                    System.out.print(" " + GestioneAllenamento.DF.format(e.getSerie().get(0).getPeso()) + " " + e.getSerie().size() + "x" + e.getSerie().get(0).getReps() + " ");
-
-                } else {
-                    System.out.print(e.getNome() + ": ");
-                    for (Serie serie : e.getSerie()) {
-                        System.out.print(GestioneAllenamento.DF.format(serie.getPeso()) + " " + serie.getReps() + " | ");
-                    }
-                }
-            }
+            //
+            //            stampaProva.getSessione().stream()
+            //                    
+            //                    .map((e) -> {
+            //                        System.out.println(e.getNome());
+            //                        return e;
+            //                    }).forEachOrdered((e) -> {
+            //                e.getSerie().forEach((s) -> {
+            //                    System.out.println("Peso: " + s.getPeso() + " Reps: " + s.getReps());
+            //                });
+            //            });
         }
 
 //        List<Sessione> sessioneFiltrata = sessione.stream()
@@ -306,11 +288,6 @@ public class EsercizioDAO {
 //                                .isAfter(LocalDate.of(2018, 10, 10)) && s.getData().isBefore(LocalDate.of(2018, 10, 21))
 //                )
 //                .collect(Collectors.toList());
-
-       
-        
-
-        
         return sessione;
     }
 
@@ -319,15 +296,31 @@ public class EsercizioDAO {
         List<Esercizio> eserciziCopy = new ArrayList();
 
         esercizi.forEach(e -> {
+
             if (e instanceof Fondamentale) {
-                eserciziCopy.add(new Fondamentale(e));
+                Fondamentale f = new Fondamentale(e);
+                f.setSerie(copiaSerie(e.getSerie()));
+                eserciziCopy.add(f);
             } else {
-                eserciziCopy.add(new Accessorio(e));
+                Accessorio a = new Accessorio(e);
+                a.setSerie(copiaSerie(e.getSerie()));
+                eserciziCopy.add(a);
             }
         }
         );
 
         return eserciziCopy;
+    }
+
+    public static ArrayList<Serie> copiaSerie(ArrayList<Serie> serie) {
+
+        ArrayList<Serie> serieCopy = new ArrayList();
+
+        serie.forEach(s
+                -> serieCopy.add(new Serie(s))
+        );
+
+        return serieCopy;
     }
 
     public void aggiornaProgressione(List<Esercizio> esercizi) {
@@ -336,7 +329,7 @@ public class EsercizioDAO {
                 .filter(customer -> "Leg press".equalsIgnoreCase(customer.getNome()))
                 .findAny()
                 .orElse(null));
-        
+
         for (Esercizio e : esercizi) {
             switch (e.getNome()) {
 
@@ -408,23 +401,52 @@ public class EsercizioDAO {
         }
     }
 
-    public void stampaSessioni(String nomeFile, List<Sessione> sessioni) throws FileNotFoundException, IOException {
+//    public void stampaSessioni(String nomeFile, List<Sessione> sessioni) throws FileNotFoundException, IOException {
+//
+//        BufferedWriter writer = new BufferedWriter(new FileWriter(nomeFile));
+//        int i;
+//
+//        for (Sessione s : sessioni) {
+//            i = sessioni.indexOf(s);
+//            if (i >= sessioni.size() - 2 || i % 3 != 0) {
+//                continue;
+//            }
+//            writer.write("Sessione n." + (i + 1) + " Data: " + s.getData().toString() + "\t\t"
+//                    + "Sessione n." + (i + 2) + " Data: " + sessioni.get(i + 1).getData().toString() + "\t\t"
+//                    + "Sessione n." + (i + 3) + " Data: " + sessioni.get(i + 2).getData().toString() + "\t\t\n");
+//            writer.newLine();
+//        }
+//
+//        writer.flush();
+//    }
+    public void stampaSessioni(List<Sessione> sessioni, LocalDate dataInizio, LocalDate dataFine) {
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter(nomeFile));
-        int i;
+        DateTimeFormatter f2 = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                .withZone(ZoneId.of("Europe/Rome")).withLocale(Locale.ITALY);
+       
+        List<Sessione> sessioneFiltrata = sessioni.stream()
+                .filter(s -> s.getData()
+                .isAfter(dataInizio.minusDays(1)) && s.getData().isBefore(dataFine.plusDays(1)))
+                .collect(Collectors.toList());
 
-        for (Sessione s : sessioni) {
-            i = sessioni.indexOf(s);
-            if (i >= sessioni.size() - 2 || i % 3 != 0) {
-                continue;
+        for (Sessione s : sessioneFiltrata) {
+            System.out.println("");
+            System.out.println(s.getData().format(f2));
+            for (Esercizio e : s.getSessione()) {
+                System.out.println("");
+                if (e instanceof Accessorio) {
+
+                    System.out.print(e.getNome() + ": ");
+                    System.out.print(" " + GestioneAllenamento.DF.format(e.getSerie().get(0).getPeso()) + " " + e.getSerie().size() + "x" + e.getSerie().get(0).getReps() + " ");
+
+                } else {
+                    System.out.print(e.getNome() + ": ");
+                    for (Serie serie : e.getSerie()) {
+                        System.out.print(GestioneAllenamento.DF.format(serie.getPeso()) + " " + serie.getReps() + " | ");
+                    }
+                }
             }
-            writer.write("Sessione n." + (i + 1) + " Data: " + s.getData().toString() + "\t\t"
-                    + "Sessione n." + (i + 2) + " Data: " + sessioni.get(i + 1).getData().toString() + "\t\t"
-                    + "Sessione n." + (i + 3) + " Data: " + sessioni.get(i + 2).getData().toString() + "\t\t\n");
-            writer.newLine();
+            System.out.println("");
         }
-
-        writer.flush();
     }
-
 }

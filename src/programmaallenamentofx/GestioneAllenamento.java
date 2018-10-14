@@ -28,10 +28,10 @@ public class GestioneAllenamento {
 
         switch (UTENTE) {
             case "C":
-                nomeFile = "C:\\Users\\Valentino\\Desktop\\AccessoriC.txt";
+                nomeFile = "C:\\Users\\Giuseppe\\Desktop\\AccessoriC.txt";
                 break;
             case "A":
-                nomeFile = "C:\\Users\\Valentino\\Desktop\\AccessoriA.txt";
+                nomeFile = "C:\\Users\\Giuseppe\\Desktop\\AccessoriA.txt";
                 break;
         }
 
@@ -41,10 +41,10 @@ public class GestioneAllenamento {
 
         switch (UTENTE) {
             case "C":
-                nomeFile = "C:\\Users\\Valentino\\Desktop\\FondamentaliC.txt";
+                nomeFile = "C:\\Users\\Giuseppe\\Desktop\\FondamentaliC.txt";
                 break;
             case "A":
-                nomeFile = "C:\\Users\\Valentino\\Desktop\\FondamentaliA.txt";
+                nomeFile = "C:\\Users\\Giuseppe\\Desktop\\FondamentaliA.txt";
                 break;
         }
 
@@ -58,16 +58,19 @@ public class GestioneAllenamento {
 //            }
         List<Esercizio> esercizi = new ArrayList(fondamentali);
         esercizi.addAll(accessori);
-//        esercizi.forEach(e -> System.out.println(e.getNome()));
-//        System.out.println("\n\nSize: " + esercizi.size() + "\n\n");
+
         LocalDate dataInizio = LocalDate.of(2018, Month.SEPTEMBER, 03);
         LocalDate dataFine = LocalDate.of(2018, Month.DECEMBER, 03);
 
         List<Sessione> sessioni = new ArrayList(allenamento
                 .generaSessioneSettimanale(dataInizio, dataFine, esercizi));
 
-//        nomeFile="C:\\Users\\Giuseppe\\Desktop\\StampaSessioni.txt";
-//        allenamento.stampaSessioni(nomeFile, sessioni);
+        
+  // Inserire qui le date per avere la stampa delle sessioni filtrate
+        LocalDate dataInizioFiltro = LocalDate.of(2018, Month.OCTOBER, 15);
+        LocalDate dataFineFiltro = LocalDate.of(2018, Month.OCTOBER, 21);
+        
+        allenamento.stampaSessioni(sessioni,dataInizioFiltro,dataFineFiltro);
     }
 
 }

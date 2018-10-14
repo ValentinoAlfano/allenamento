@@ -6,9 +6,9 @@
 package programmaallenamentofx;
 
 import java.time.LocalDate;
-import java.util.Collections;
+
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 /**
  *
@@ -25,6 +25,10 @@ public class SessioneLegs extends Sessione {
                 .orElse(null);
         
         EsercizioDAO.aggiornaProgressione((Fondamentale) es);
+    }
+    
+    public SessioneLegs(Sessione s) {
+    super(s);
     }
     
 }
