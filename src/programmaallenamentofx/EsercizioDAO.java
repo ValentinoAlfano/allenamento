@@ -6,13 +6,12 @@
 package programmaallenamentofx;
 
 import java.io.BufferedReader;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -42,7 +41,6 @@ public class EsercizioDAO {
         String line = reader.readLine();
         while (line != null) {
 
-//Parsing del file di testo (Tokenizer?) e caricamento dei dati nella lista   
             StringTokenizer st = new StringTokenizer(line, ",");
 
             nome = st.nextToken();
@@ -67,8 +65,6 @@ public class EsercizioDAO {
             esercizio.setNome(nome);
             esercizio.setTipo(tipo);
 
-            Fondamentale copiaEsercizio = new Fondamentale(esercizio);
-
             listFondamentali.add(esercizio);
 
             line = reader.readLine();
@@ -79,15 +75,14 @@ public class EsercizioDAO {
     }
 
     public List<Accessorio> leggiFileAccessori(String nomeFile) throws FileNotFoundException, IOException {
-        List<Accessorio> listAccessori = new ArrayList();
 
+        List<Accessorio> listAccessori = new ArrayList();
         String nome;
         double peso;
         byte serieTotali;
         double percIncPeso;
         TipoEsercizio tipo;
         double minIncremento;
-
         BufferedReader reader = new BufferedReader(new FileReader(nomeFile));
         String line = reader.readLine();
 
@@ -220,7 +215,7 @@ public class EsercizioDAO {
         return sessione;
     }
 
-    public List<Sessione> generaSessioneSettimanale(LocalDate dataInizio, LocalDate dataFine, List<Esercizio> esercizi) {
+    public List<Sessione> generaSessioni(LocalDate dataInizio, LocalDate dataFine, List<Esercizio> esercizi) {
 
         List<Esercizio> eserciziMisc = new ArrayList(estraiEsercizi(esercizi, TipoEsercizio.MISC));
         List<Esercizio> eserciziLegs = new ArrayList(estraiEsercizi(esercizi, TipoEsercizio.LEGS));
@@ -231,7 +226,11 @@ public class EsercizioDAO {
         eserciziLegs.addAll(eserciziMisc);
 
         LocalDate dataInc;
-        Sessione sess;
+        List<LocalDate> dateDeload = new ArrayList();
+        dateDeload.add(LocalDate.of(2018, Month.DECEMBER, 4));
+        dateDeload.add(LocalDate.of(2019, Month.MARCH, 5));
+        dateDeload.add(LocalDate.of(2019, Month.JUNE, 6));
+        dateDeload.add(LocalDate.of(2019, Month.JULY, 16));
 
         dataInc = dataInizio.plusWeeks(1);
         List<Sessione> sessione = new ArrayList();
@@ -239,26 +238,16 @@ public class EsercizioDAO {
                 .filter(e -> e instanceof Accessorio)
                 .collect(Collectors.toList());
 
-        Sessione stampaProva = null;
         for (LocalDate date = dataInizio; date.isBefore(dataFine.plusDays(1)); date = date.plusDays(1)) {
-//            eserciziPush.forEach(s -> System.out.println(s.getNome()));
-//            System.out.println("Size: "+eserciziPush.size());
 
             if (dataInc.equals(date)) {
-
                 aggiornaProgressione(accessori);
-
-//                   for (Esercizio e : esercizi.stream()
-//                        .filter(e -> e instanceof Accessorio)
-//                        .collect(Collectors.toList())) {
-//
-//                    System.out.println(e.getNome());
-//                    for (Serie serie : e.getSerie()) {
-//                        System.out.println(serie.getPeso() + " " + serie.getReps());
-//
-//                    }
-//                }
                 dataInc = dataInc.plusWeeks(1);
+            }
+
+            if (dateDeload.contains(date)) {
+                deloadEsercizi(esercizi);
+
             }
 
             if (date.getDayOfWeek().equals(DayOfWeek.THURSDAY)
@@ -267,27 +256,8 @@ public class EsercizioDAO {
             }
 
             sessione.add(creaSessione(date, eserciziPull, eserciziPush, eserciziLegs));
-//            System.out.println(stampaProva.getData());
-            //
-            //            stampaProva.getSessione().stream()
-            //                    
-            //                    .map((e) -> {
-            //                        System.out.println(e.getNome());
-            //                        return e;
-            //                    }).forEachOrdered((e) -> {
-            //                e.getSerie().forEach((s) -> {
-            //                    System.out.println("Peso: " + s.getPeso() + " Reps: " + s.getReps());
-            //                });
-            //            });
-        }
 
-//        List<Sessione> sessioneFiltrata = sessione.stream()
-//                .filter(
-//                        s
-//                        -> s.getData()
-//                                .isAfter(LocalDate.of(2018, 10, 10)) && s.getData().isBefore(LocalDate.of(2018, 10, 21))
-//                )
-//                .collect(Collectors.toList());
+        }
         return sessione;
     }
 
@@ -306,8 +276,7 @@ public class EsercizioDAO {
                 a.setSerie(copiaSerie(e.getSerie()));
                 eserciziCopy.add(a);
             }
-        }
-        );
+        });
 
         return eserciziCopy;
     }
@@ -316,9 +285,7 @@ public class EsercizioDAO {
 
         ArrayList<Serie> serieCopy = new ArrayList();
 
-        serie.forEach(s
-                -> serieCopy.add(new Serie(s))
-        );
+        serie.forEach(s -> serieCopy.add(new Serie(s)));
 
         return serieCopy;
     }
@@ -368,6 +335,7 @@ public class EsercizioDAO {
                     break;
 
                 default:
+
                     if (e instanceof Accessorio) {
                         if (e.getSerie().get(1).getReps().equals("12")) {
                             e.getSerie().forEach((s) -> {
@@ -381,7 +349,6 @@ public class EsercizioDAO {
                             });
                         }
                     }
-
             }
         }
     }
@@ -392,7 +359,7 @@ public class EsercizioDAO {
         double perc = 0.3, peso = f.getSerie().get(f.getSerie().size() - 1).getPeso() + f.getInc();
         for (Serie se : f.getSerie()) {
             if (i++ < 4) {
-                se.setPeso(Math.round((peso * perc) / f.getMinIncremento()) * f.getMinIncremento()); //Math.round(value / factor) * factor;
+                se.setPeso(Math.round((peso * perc) / f.getMinIncremento()) * f.getMinIncremento());
                 perc += 0.2;
             } else {
                 se.setPeso(Math.round(peso / f.getMinIncremento()) * f.getMinIncremento());
@@ -401,29 +368,11 @@ public class EsercizioDAO {
         }
     }
 
-//    public void stampaSessioni(String nomeFile, List<Sessione> sessioni) throws FileNotFoundException, IOException {
-//
-//        BufferedWriter writer = new BufferedWriter(new FileWriter(nomeFile));
-//        int i;
-//
-//        for (Sessione s : sessioni) {
-//            i = sessioni.indexOf(s);
-//            if (i >= sessioni.size() - 2 || i % 3 != 0) {
-//                continue;
-//            }
-//            writer.write("Sessione n." + (i + 1) + " Data: " + s.getData().toString() + "\t\t"
-//                    + "Sessione n." + (i + 2) + " Data: " + sessioni.get(i + 1).getData().toString() + "\t\t"
-//                    + "Sessione n." + (i + 3) + " Data: " + sessioni.get(i + 2).getData().toString() + "\t\t\n");
-//            writer.newLine();
-//        }
-//
-//        writer.flush();
-//    }
     public void stampaSessioni(List<Sessione> sessioni, LocalDate dataInizio, LocalDate dataFine) {
 
         DateTimeFormatter f2 = DateTimeFormatter.ofPattern("dd/MM/yyyy")
                 .withZone(ZoneId.of("Europe/Rome")).withLocale(Locale.ITALY);
-       
+
         List<Sessione> sessioneFiltrata = sessioni.stream()
                 .filter(s -> s.getData()
                 .isAfter(dataInizio.minusDays(1)) && s.getData().isBefore(dataFine.plusDays(1)))
@@ -449,4 +398,49 @@ public class EsercizioDAO {
             System.out.println("");
         }
     }
+
+    public void deloadEsercizi(List<Esercizio> esercizi) {
+
+        for (Esercizio e : esercizi) {
+            if (e instanceof Accessorio) {
+                ((Accessorio) e).setPercent(((Accessorio) e).getPercent()/1.7);
+            }
+
+            switch (e.getNome()) {
+
+                case "Chinups":
+
+                    e.getSerie().forEach((s) -> {
+                        s.setReps(Byte.toString(((byte) Math.round(Byte.parseByte(s.getReps()) * 0.7))));
+                    });
+                    break;
+
+                case "Pullups":
+                    e.getSerie().forEach((s) -> {
+                        s.setReps(Byte.toString(((byte) Math.round(Byte.parseByte(s.getReps()) * 0.7))));
+                    });
+                    break;
+
+                case "Hanging Leg Raises":
+                    e.getSerie().forEach((s) -> {
+                        s.setReps(Byte.toString(((byte) Math.round(Byte.parseByte(s.getReps()) * 0.7))));
+                    });
+                    break;
+
+                case "Incline Crunch":
+                    e.getSerie().forEach((s) -> {
+                        s.setReps(Byte.toString(((byte) Math.round(Byte.parseByte(s.getReps()) * 0.7))));
+                    });
+                    break;
+
+                default:
+                    e.getSerie().forEach((s) -> {
+                        s.setPeso(Math.round(s.getPeso() * 0.7 / e.getMinIncremento()) * e.getMinIncremento());
+                    });
+
+            }
+        }
+
+    }
+
 }

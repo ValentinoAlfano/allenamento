@@ -12,14 +12,8 @@ package programmaallenamentofx;
 public class Fondamentale extends Esercizio {
 
     private double inc;
-    @Override
-    void aggiornaProgressione() {
-        
-               getSerie().forEach((s) -> {
-                    s.setPeso(s.getPeso() + inc);
-                });
-        }
 
+    
     public Fondamentale(Esercizio e) {
         super(e);
        

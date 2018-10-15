@@ -14,9 +14,10 @@ import java.util.List;
  */
 public abstract class Sessione {
 
-    private List<Esercizio> sessione;
-
+    final private LocalDate data;
+    final private List<Esercizio> sessione;
     private static byte tipoSessione = 1;
+    
 
     public static byte getTipoSessione() {
         return tipoSessione;
@@ -26,18 +27,14 @@ public abstract class Sessione {
         Sessione.tipoSessione = tipoSessione;
     }
 
-    private LocalDate data;
-
     public Sessione(LocalDate data, List<Esercizio> esercizi) {
 
         this.data = data;
-
         sessione = EsercizioDAO.copiaEsercizi(esercizi);
-
         tipoSessione += 1;
     }
 
-    public List<Esercizio> getSessione() {
+    final public List<Esercizio> getSessione() {
         return sessione;
     }
 
@@ -45,9 +42,5 @@ public abstract class Sessione {
         return data;
     }
 
-    public Sessione(Sessione s) {
-        this(s.getData(), s.getSessione());
-        tipoSessione -=1;
-    }
 
 }

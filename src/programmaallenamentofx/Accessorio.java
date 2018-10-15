@@ -11,10 +11,6 @@ package programmaallenamentofx;
  */
 public class Accessorio extends Esercizio {
 
-    @Override
-    void aggiornaProgressione() {
-
-    }
 
     private double percent;
 

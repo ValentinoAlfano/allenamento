@@ -49,26 +49,20 @@ public class GestioneAllenamento {
         }
 
         List<Esercizio> fondamentali = new ArrayList(allenamento.leggiFileFondamentali(nomeFile));
-//          for (Esercizio e : fondamentali) {
-//                System.out.println(e.getNome() + ((Fondamentale) e).getInc());
-//                for (Serie serie : e.getSerie()) {
-//                    System.out.println(serie.getPeso() + " " + serie.getReps());
-//
-//                }
-//            }
+
         List<Esercizio> esercizi = new ArrayList(fondamentali);
         esercizi.addAll(accessori);
 
         LocalDate dataInizio = LocalDate.of(2018, Month.SEPTEMBER, 03);
-        LocalDate dataFine = LocalDate.of(2018, Month.DECEMBER, 03);
+        LocalDate dataFine = LocalDate.of(2019, Month.JULY, 31);
 
         List<Sessione> sessioni = new ArrayList(allenamento
-                .generaSessioneSettimanale(dataInizio, dataFine, esercizi));
+                .generaSessioni(dataInizio, dataFine, esercizi));
 
         
   // Inserire qui le date per avere la stampa delle sessioni filtrate
-        LocalDate dataInizioFiltro = LocalDate.of(2018, Month.OCTOBER, 15);
-        LocalDate dataFineFiltro = LocalDate.of(2018, Month.OCTOBER, 21);
+        LocalDate dataInizioFiltro = LocalDate.of(2019, Month.JULY, 20);
+        LocalDate dataFineFiltro = LocalDate.of(2019, Month.JULY, 31);
         
         allenamento.stampaSessioni(sessioni,dataInizioFiltro,dataFineFiltro);
     }

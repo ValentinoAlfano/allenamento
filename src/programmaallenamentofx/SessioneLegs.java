@@ -6,29 +6,22 @@
 package programmaallenamentofx;
 
 import java.time.LocalDate;
-
 import java.util.List;
-
 
 /**
  *
  * @author Giuseppe
  */
 public class SessioneLegs extends Sessione {
-    
+
     public SessioneLegs(LocalDate data, List<Esercizio> esercizi) {
         super(data, esercizi);
-        
+
         Esercizio es = esercizi.stream()
                 .filter(customer -> "Squat".equalsIgnoreCase(customer.getNome()))
                 .findAny()
                 .orElse(null);
-        
+
         EsercizioDAO.aggiornaProgressione((Fondamentale) es);
     }
-    
-    public SessioneLegs(Sessione s) {
-    super(s);
-    }
-    
 }

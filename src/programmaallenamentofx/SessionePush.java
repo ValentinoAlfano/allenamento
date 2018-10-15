@@ -19,18 +19,11 @@ public class SessionePush extends Sessione {
 
     public SessionePush(LocalDate data, List<Esercizio> esercizi) {
         super(data, esercizi);
-        //esercizi.forEach(e -> System.out.println(e.getNome()));
-        //System.out.println("");
-        //sessione.forEach(e -> System.out.println(e.getNome()));
-        // System.out.println("\n\n");
-        // esercizi.forEach(s -> System.out.println(s.getNome()));
+ 
         gestioneSuperSerie();
-        // System.out.println("\n\n");
-        // esercizi.forEach(s -> System.out.println(s.getNome()));
-        // System.out.println("\n\n");
-        //System.out.println(sessione);
-//        System.out.println(esercizi);
+
         switch (variante) {
+            
             case 0:
 
                 getSessione().removeIf(p -> (p.getNome().equalsIgnoreCase("Bench pressA")
@@ -43,7 +36,9 @@ public class SessionePush extends Sessione {
                 });
 
                 break;
+           
             case 1:
+                
                 getSessione().removeIf(p -> (p.getNome().equalsIgnoreCase("Bench pressF")
                         || p.getNome().equalsIgnoreCase("Overhead pressA")));
 
@@ -60,9 +55,6 @@ public class SessionePush extends Sessione {
         variante++;
     }
 
-    public SessionePush(SessionePush s) {
-        this(s.getData(), s.getSessione());
-    }
 
     private void gestioneSuperSerie() {
 
@@ -76,8 +68,7 @@ public class SessionePush extends Sessione {
                 .orElse(null);
 
         getSessione().removeAll(Collections.singleton(lateralRaises));
-
-        //sessione.forEach(e -> System.out.println(e.getNome()));
+        
         for (String s : prova) {
             getSessione().add(i = getSessione()
                     .indexOf(getSessione()
@@ -87,14 +78,7 @@ public class SessionePush extends Sessione {
                             .orElse(null)) + 1,
                     lateralRaises);
             getSessione().get(i - 1).setNome(s.concat(" SS"));
-
         }
-        //sessione.forEach(e -> System.out.println(e.getNome()));
-    }
-    
-    
-     public SessionePush(Sessione s) {
-    super(s);
     }
 
 }

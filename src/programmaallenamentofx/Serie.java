@@ -11,7 +11,7 @@ package programmaallenamentofx;
  */
 public class Serie {
     
-   private String reps;
+    private String reps;
     private double peso;
 
     public String getReps() {

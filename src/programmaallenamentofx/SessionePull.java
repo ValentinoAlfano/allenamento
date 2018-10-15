@@ -20,6 +20,7 @@ public class SessionePull extends Sessione {
         super(data, esercizi);
 
         switch (variante) {
+            
             case 0:
                 getSessione().removeIf(p
                         -> (p.getNome().equalsIgnoreCase("Barbell Row")
@@ -33,6 +34,7 @@ public class SessionePull extends Sessione {
                 });
 
                 break;
+                
             case 1:
                 getSessione().removeIf(p -> (p.getNome().equalsIgnoreCase("Deadlift")
                         || p.getNome().equalsIgnoreCase("Lat machine")
@@ -45,6 +47,7 @@ public class SessionePull extends Sessione {
                 });
 
                 break;
+                
             case 2:
                 getSessione().removeIf(p -> (p.getNome().equalsIgnoreCase("Barbell Row")
                         || p.getNome().equalsIgnoreCase("Pullups")
@@ -57,6 +60,7 @@ public class SessionePull extends Sessione {
                 });
 
                 break;
+                
             case 3:
                 getSessione().removeIf(p -> (p.getNome().equalsIgnoreCase("Deadlift")
                         || p.getNome().equalsIgnoreCase("Pullups")
@@ -69,6 +73,7 @@ public class SessionePull extends Sessione {
                 });
 
                 break;
+                
             case 4:
                 getSessione().removeIf(p -> (p.getNome().equalsIgnoreCase("Barbell Row")
                         || p.getNome().equalsIgnoreCase("Lat machine")
@@ -81,6 +86,7 @@ public class SessionePull extends Sessione {
                 });
 
                 break;
+                
             case 5:
                 getSessione().removeIf(p -> (p.getNome().equalsIgnoreCase("Deadlift")
                         || p.getNome().equalsIgnoreCase("Pullups")
@@ -98,9 +104,6 @@ public class SessionePull extends Sessione {
         }
         variante++;
     }
-    
-     public SessionePull(Sessione s) {
-    super(s);
-    }
+
 
 }
