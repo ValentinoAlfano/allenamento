@@ -28,10 +28,10 @@ public class GestioneAllenamento {
 
         switch (UTENTE) {
             case "C":
-                nomeFile = "C:\\Users\\Giuseppe\\Desktop\\AccessoriC.txt";
+                nomeFile = "/home/balint/AccessoriC.txt";
                 break;
             case "A":
-                nomeFile = "C:\\Users\\Giuseppe\\Desktop\\AccessoriA.txt";
+                nomeFile = "/home/balint/AccessoriA.txt";
                 break;
         }
 
@@ -41,10 +41,10 @@ public class GestioneAllenamento {
 
         switch (UTENTE) {
             case "C":
-                nomeFile = "C:\\Users\\Giuseppe\\Desktop\\FondamentaliC.txt";
+                nomeFile = "/home/balint/FondamentaliC.txt";
                 break;
             case "A":
-                nomeFile = "C:\\Users\\Giuseppe\\Desktop\\FondamentaliA.txt";
+                nomeFile = "/home/balint/FondamentaliA.txt";
                 break;
         }
 
@@ -61,8 +61,8 @@ public class GestioneAllenamento {
 
         
   // Inserire qui le date per avere la stampa delle sessioni filtrate
-        LocalDate dataInizioFiltro = LocalDate.of(2019, Month.JULY, 20);
-        LocalDate dataFineFiltro = LocalDate.of(2019, Month.JULY, 31);
+        LocalDate dataInizioFiltro = LocalDate.of(2018, Month.OCTOBER, 29);
+        LocalDate dataFineFiltro = LocalDate.of(2018, Month.DECEMBER, 4);
         
         allenamento.stampaSessioni(sessioni,dataInizioFiltro,dataFineFiltro);
     }
